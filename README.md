@@ -16,5 +16,7 @@ composer require cspray/websocket-commands
 
 ## Use Guide
 
+_Documentation to come_
+
 [amphp/websocket-server]: https://github.com/amphp/websocket-server
 [Composer]: https://getcomposer.org
