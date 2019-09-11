@@ -48,6 +48,13 @@ final class CommandPoweredWebsocket extends Websocket {
     }
 
     /**
+     * Remove all WebsocketCommand that have been added to this implementation.
+     */
+    public function clearCommands() : void {
+        $this->commands = [];
+    }
+
+    /**
      * Add a set of $commands to the Websocket.
      *
      * Please be aware that passing in $commands with duplicate names effectively overwrites previous values. Generally
