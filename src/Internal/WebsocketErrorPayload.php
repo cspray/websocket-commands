@@ -3,7 +3,6 @@
 namespace Cspray\WebsocketCommands\Internal;
 
 use Cspray\WebsocketCommands\Internal\Enum\WebsocketError;
-use Cspray\WebsocketCommands\ServerPayload;
 
 /**
  *
@@ -11,7 +10,7 @@ use Cspray\WebsocketCommands\ServerPayload;
  * @license See LICENSE in source root
  * @internal
  */
-class WebsocketErrorPayload implements ServerPayload {
+class WebsocketErrorPayload {
 
     private $websocketError;
 
