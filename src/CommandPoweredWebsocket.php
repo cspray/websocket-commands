@@ -100,10 +100,10 @@ final class CommandPoweredWebsocket extends Websocket {
      * websocket response.
      *
      * @param Request $request The HTTP request that instigated the handshake
-     * @param Response $response The switching protocol response for adding headers, etc.
+     * @param Response $response The HTTP response returned to the user
      *
-     * @return Promise<Response> Resolve with the given response to accept the connection
-     *     or resolve with a new Response object to deny the connection.
+     * @return Promise<Response> Resolve with the given Response, modify the status code to a non-2XX response to reject
+     *                           the connection.
      */
     protected function onHandshake(Request $request, Response $response) : Promise {
         return call(function() use($request, $response) {
@@ -135,6 +135,20 @@ final class CommandPoweredWebsocket extends Websocket {
      *
      * Obviously your data structure can be whatever you would like as long as the command key is adhered to; the entire
      * JSON payload received from the Client will be passed to each WebsocketCommand in the form of a ClientPayload.
+     *
+     * If the Client Request results in an error that prevents your WebsocketCommand from executing the following data
+     * structure will be returned to the Client:
+     *
+     *  [
+     *      'error' => [
+     *          'code' => ####,
+     *          'message' => 'Some message',
+     *      ]
+     *  ]
+     *
+     * The 'code' will be a 4-digit number that represents the unique error encountered by this implementation. The
+     * message provides as many suitable details as possible for why the error was encountered. For more information
+     * about the errors that this implemenation may respond with please {@see WebsocketError}.
      *
      * @param Client $client The websocket client connection.
      * @param Request $request The HTTP request that instigated the connection.

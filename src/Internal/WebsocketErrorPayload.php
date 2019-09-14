@@ -3,14 +3,16 @@
 namespace Cspray\WebsocketCommands\Internal;
 
 use Cspray\WebsocketCommands\Internal\Enum\WebsocketError;
+use JsonSerializable;
 
 /**
+ * An error object that ensures a WebsocketError is serialized into the appropriate JSON payload for a client.
  *
  * @package Cspray\WebsocketCommands\Internal
  * @license See LICENSE in source root
  * @internal
  */
-class WebsocketErrorPayload {
+class WebsocketErrorPayload implements JsonSerializable {
 
     private $websocketError;
 
@@ -19,11 +21,16 @@ class WebsocketErrorPayload {
     }
 
     /**
-     * Specify data which should be serialized to JSON
+     * Returns an array with the following format based on the WebsocketError passed:
      *
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
+     *  [
+     *      'error' => [
+     *          'code' => ###,
+     *          'msg' => XXXXXXXXXX
+     *      ]
+     *  ]
+     *
+     * @return mixed A set of data about this error
      * @since 5.4.0
      */
     public function jsonSerialize() {
@@ -34,4 +41,5 @@ class WebsocketErrorPayload {
             ]
         ];
     }
+
 }

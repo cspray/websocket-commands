@@ -5,7 +5,7 @@ namespace Cspray\WebsocketCommands\Internal\Enum;
 use Cspray\Yape\Enum;
 
 /**
- * Class WebsocketError
+ * An enum that specifies the type of errors that this library may return if an error is encountered
  *
  * @package Cspray\WebsocketCommands\Internal\Enum
  * @internal
@@ -39,6 +39,11 @@ final class WebsocketError implements Enum {
         return self::$container[$name];
     }
 
+    /**
+     * An error that represents the payload received from the client could not be parsed into valid JSON.
+     *
+     * @return WebsocketError
+     */
     public static function InvalidJson() : WebsocketError {
         return self::getSingleton(
             'InvalidJson',
@@ -48,6 +53,12 @@ final class WebsocketError implements Enum {
         );
     }
 
+    /**
+     * An error that represents either the command key is not present in the client payload or the command specified is
+     * not executable by the running CommandPoweredWebsocket.
+     *
+     * @return WebsocketError
+     */
     public static function InvalidCommand() : WebsocketError {
         return self::getSingleton(
             'InvalidCommand',

@@ -16,11 +16,12 @@ use Amp\Promise;
 interface HandshakeAuthenticator {
 
     /**
+     * You may modify the Response to add headers or cookies, additionally you may change the status code of the
+     * Response to a non-2XX code and the client's handshake will be rejected.
+     *
      * @param Request $request
      * @param Response $response
-     * @return Promise
-     *
-     * @todo Update documentation after clarification on returning a new Response
+     * @return Promise<Response>
      */
     public function onHandshake(Request $request, Response $response) : Promise;
 
