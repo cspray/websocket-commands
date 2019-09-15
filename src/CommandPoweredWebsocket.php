@@ -166,7 +166,6 @@ final class CommandPoweredWebsocket extends Websocket {
             return Promise\all($promises);
         });
 
-
         return call(function() use($client) {
             /** @var Message $message */
             while ($message = yield $client->receive()) {

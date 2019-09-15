@@ -12,7 +12,7 @@ use JsonSerializable;
  * @license See LICENSE in source root
  * @internal
  */
-class WebsocketErrorPayload implements JsonSerializable {
+final class WebsocketErrorPayload implements JsonSerializable {
 
     private $websocketError;
 

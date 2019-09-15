@@ -23,14 +23,14 @@
   "require": {
     "php": "^7.2",
     "ext-json": "*",
+    "adbario/php-dot-notation": "^2.2",
     "amphp/http-server": "^2.0.0-rc1",
     "amphp/http-server-router": "^1.0",
     "amphp/websocket-server": "^2.0.0-rc1",
     "amphp/websocket": "^1.0.0-rc1",
     "amphp/log": "^1.1",
-    "psr/log": "^1.1",
     "cspray/yape": "^1.2",
-    "adbario/php-dot-notation": "^2.2"
+    "psr/log": "^1.1"
   },
   "require-dev": {
     "phpunit/phpunit": "^8.3",
