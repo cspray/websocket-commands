@@ -33,7 +33,21 @@ class OriginHostMatchingHandshakeAuthenticatorTest extends AsyncTestCase {
         return call(function() {
             $this->response->setStatus(Status::OK);
             $this->request->addHeader('Origin', 'http://127.0.0.1:1337');
-            $subject = new OriginHostMatchingHandshakeAuthenticator();
+            $subject = new OriginHostMatchingHandshakeAuthenticator(['http://127.0.0.1:1337']);
+
+            /** @var Response $response */
+            $response = yield $subject->onHandshake($this->request, $this->response);
+
+            $this->assertInstanceOf(Response::class, $response);
+            $this->assertSame(Status::OK, $response->getStatus());
+        });
+    }
+
+    public function testRequestWithoutMatchingHostsReturns200() {
+        return call(function() {
+            $this->response->setStatus(Status::OK);
+            $this->request->addHeader('Origin', 'http://127.0.0.2:1337');
+            $subject = new OriginHostMatchingHandshakeAuthenticator(['http://127.0.0.1:1337']);
 
             /** @var Response $response */
             $response = yield $subject->onHandshake($this->request, $this->response);

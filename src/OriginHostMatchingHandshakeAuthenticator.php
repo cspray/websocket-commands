@@ -19,7 +19,10 @@ final class OriginHostMatchingHandshakeAuthenticator implements HandshakeAuthent
 
     private $hosts;
 
-    public function __construct(string ...$hosts) {
+    /**
+     * @param string[] $hosts
+     */
+    public function __construct(array $hosts) {
         $this->hosts = $hosts;
     }
 
