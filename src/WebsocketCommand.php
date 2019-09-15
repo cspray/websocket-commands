@@ -21,7 +21,7 @@ interface WebsocketCommand {
     public function getName() : string;
 
     /**
-     * Exceute whatever is required for this command and return a Promise that resolves when it is complete.
+     * Execute whatever is required for this command and return a Promise that resolves when it is complete.
      *
      * @param Client $client
      * @param ClientPayload $clientPayload
