@@ -8,6 +8,8 @@ use Amp\Promise;
 use Amp\Websocket\Client;
 use Amp\Websocket\Message;
 use Amp\Websocket\Server\Websocket;
+use Cspray\WebsocketCommands\Enum\MiddlewareChain;
+use Cspray\WebsocketCommands\Exception\InvalidTypeException;
 use Cspray\WebsocketCommands\Internal\Enum\WebsocketError;
 use Cspray\WebsocketCommands\Internal\WebsocketErrorPayload;
 use function Amp\call;
@@ -33,9 +35,15 @@ final class CommandPoweredWebsocket extends Websocket {
      */
     private $clientDisconnectObservers = [];
 
+    /**
+     * @var MiddlewareCollection
+     */
+    private $middleware;
+
     public function __construct(HandshakeAuthenticator $handshakeAuthenticator) {
         parent::__construct();
         $this->handshakeAuthenticator = $handshakeAuthenticator;
+        $this->middleware = new MiddlewareCollection();
     }
 
     /**
@@ -72,13 +80,29 @@ final class CommandPoweredWebsocket extends Websocket {
     }
 
     /**
-     * Add an observer that will be notified when every Client is disconnected.
-     *
-     * @param ClientDisconnectObserver ...$clientDisconnectObservers
+     * @param WebsocketCommand $command
+     * @param WebsocketCommandMiddleware ...$middlewares
      */
-    public function addClientDisconnectObservers(ClientDisconnectObserver ...$clientDisconnectObservers) {
-        foreach ($clientDisconnectObservers as $clientDisconnectObserver) {
-            $this->clientDisconnectObservers[] = $clientDisconnectObserver;
+    public function addCommand(WebsocketCommand $command, WebsocketCommandMiddleware ...$middlewares) : void {
+        $this->commands[$command->getName()] = $command;
+        foreach ($middlewares as $middleware) {
+            $this->middleware->addCommandSpecificMiddleware($command, $middleware);
+        }
+        if ($command instanceof ClientDisconnectObserver) {
+            $this->addClientDisconnectObservers($command);
+        }
+    }
+
+    /**
+     * @return MiddlewareCollection
+     */
+    public function getMiddlewares() : MiddlewareCollection {
+        return $this->middleware;
+    }
+
+    public function addMiddlewares(WebsocketCommandMiddleware ...$middlewares) : void {
+        foreach ($middlewares as $middleware) {
+            $this->middleware->addGlobalMiddleware($middleware);
         }
     }
 
@@ -89,6 +113,17 @@ final class CommandPoweredWebsocket extends Websocket {
      */
     public function getClientDisconnectObservers() : array {
         return $this->clientDisconnectObservers;
+    }
+
+    /**
+     * Add an observer that will be notified when every Client is disconnected.
+     *
+     * @param ClientDisconnectObserver ...$clientDisconnectObservers
+     */
+    public function addClientDisconnectObservers(ClientDisconnectObserver ...$clientDisconnectObservers) : void {
+        foreach ($clientDisconnectObservers as $clientDisconnectObserver) {
+            $this->clientDisconnectObservers[] = $clientDisconnectObserver;
+        }
     }
 
     /**
@@ -169,25 +204,67 @@ final class CommandPoweredWebsocket extends Websocket {
         return call(function() use($client) {
             /** @var Message $message */
             while ($message = yield $client->receive()) {
-                $rawMessage = yield $message->buffer();
-                $json = json_decode($rawMessage, true);
-
-                if (!is_array($json)) {
-                    $errorPayload = new WebsocketErrorPayload(WebsocketError::InvalidJson());
-                    yield $client->send(json_encode($errorPayload));
-                    continue;
-                }
-
-                $clientPayload = new ClientPayload($json);
-
-                if (!array_key_exists($clientPayload->get('command'), $this->commands)) {
-                    $errorPayload = new WebsocketErrorPayload(WebsocketError::InvalidCommand());
-                    yield $client->send(json_encode($errorPayload));
+                $clientPayload = yield $this->parseClientPayload($client, $message);
+                if (is_null($clientPayload)) {
                     continue;
                 }
 
                 $command = $this->commands[$clientPayload->get('command')];
 
+                yield $this->processCommand($command, $client, $clientPayload);
+            }
+        });
+    }
+
+    private function parseClientPayload(Client $client, Message $message) : Promise {
+        return call(function() use($client, $message) {
+            $rawMessage = yield $message->buffer();
+            $json = json_decode($rawMessage, true);
+
+            if (!is_array($json)) {
+                $errorPayload = new WebsocketErrorPayload(WebsocketError::InvalidJson());
+                yield $client->send(json_encode($errorPayload));
+                return null;
+            }
+
+            $clientPayload = new ClientPayload($json);
+
+            if (!array_key_exists($clientPayload->get('command'), $this->commands)) {
+                $errorPayload = new WebsocketErrorPayload(WebsocketError::InvalidCommand());
+                yield $client->send(json_encode($errorPayload));
+                return null;
+            }
+
+            return $clientPayload;
+        });
+    }
+
+    private function processCommand(WebsocketCommand $command, Client $client, ClientPayload $clientPayload) : Promise {
+        return call(function() use($command, $client, $clientPayload) {
+            $shortCircuited = false;
+
+            foreach ($this->middleware->getMiddlewaresForCommand($command) as $middleware) {
+                $whatToDo = yield $middleware->handleClient($client, $clientPayload);
+
+                if (is_null($whatToDo)) {
+                    $whatToDo = MiddlewareChain::Continue();
+                }
+
+                if (!$whatToDo instanceof MiddlewareChain) {
+                    $msg = 'The resolved Promise from a %s MUST be a %s instance or be null.';
+                    throw new InvalidTypeException(sprintf($msg, WebsocketCommandMiddleware::class, MiddlewareChain::class));
+                } else if (MiddlewareChain::Continue()->equals($whatToDo)) {
+                    continue;
+                } else if (MiddlewareChain::Skip()->equals($whatToDo)) {
+                    break;
+                } else if (MiddlewareChain::ShortCircuit()->equals($whatToDo)) {
+                    $shortCircuited = true;
+                    break;
+                }
+
+            }
+
+            if (!$shortCircuited) {
                 yield $command->execute($client, $clientPayload);
             }
         });

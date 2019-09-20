@@ -16,6 +16,8 @@ interface WebsocketCommand {
     /**
      * Return the name that the client must use to execute this WebsocketCommand.
      *
+     *
+     *
      * @return string
      */
     public function getName() : string;
