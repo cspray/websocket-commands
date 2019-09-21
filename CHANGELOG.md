@@ -2,10 +2,17 @@
 
 ## 1.2.0 - 20??-??-??
 
-- Add a `WebsocketCommandMiddleware` that allows for the manipulation of the ClientPayload and possible short circuiting of other middlewares.
 - Add a `WebsocketMulticaster` that will allow for multicasting to a pool of clients without the need to ask for the Websocket directly.
 - Add a `WebsocketBroadcaster` that will allow for broadcasting to all clients without the need to ask for the Websocket directly.
 - Implement better logging within the `CommandPoweredWebsocket`.
+
+### Added
+
+- Added a `WebsocketCommandMiddleware` that allows for the manipulation of the ClientPayload and possible short circuiting of other middlewares.
+- Added a `MiddlewareChain` enum that explicitly controls how remaining middleware will be invoked; currently you can continue execution, 
+skip remaining middleware and execute command, or short circuit remaining middleware and DO NOT execute the command.
+- Added a `MiddlewareCollection` data structure that stores the global and command specific middleware.
+- Adds new methods on to the `CommandPoweredWebsocket` to facilitate adding global middleware 
 
 ## 1.1.0 - 2019-9-15
 

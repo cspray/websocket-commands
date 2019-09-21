@@ -6,6 +6,7 @@ use Amp\Promise;
 use Amp\Success;
 use Amp\Websocket\Client;
 use Cspray\WebsocketCommands\ClientPayload;
+use Cspray\WebsocketCommands\Test\Support\Counter;
 use Cspray\WebsocketCommands\WebsocketCommand;
 use function Amp\call;
 
@@ -20,8 +21,10 @@ class StubWebsocketCommand implements WebsocketCommand {
     public $clientPayload;
 
     private $name;
+    private $counter;
 
-    public function __construct(string $name = 'stub-websocket-command') {
+    public function __construct(Counter $counter, string $name = 'stub-websocket-command') {
+        $this->counter = $counter;
         $this->name = $name;
     }
 
@@ -40,6 +43,7 @@ class StubWebsocketCommand implements WebsocketCommand {
         return call(function() use($client, $clientPayload) {
             $this->client = $client;
             $this->clientPayload = $clientPayload;
+            $this->counter->increment();
         });
     }
 
