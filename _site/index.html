@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>WebsocketCommands</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+  <script src="https://kit.fontawesome.com/e0b4a7b997.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header>
+  <div class="container is-fluid">
+    <nav class="navbar">
+      <div class="nav-brand">
+        <a href="/" class="navbar-item"><h1 class="title">WebsocketCommands</h1></a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="container is-fluid">
+    <div class="columns">
+      <div class="column">
+        <section class="section">
+          <p class="content">A PHP 7+ micro-framework to help you create Websocket powered applications using <a href="https://github.com/amphp/websocket-server">amphp/websocket-server</a></p>
+
+<h2 id="installation" class="subtitle is-size-2">Installation</h2>
+<p class="content">
+  We recommend using <a href="https://getcomposer.org">Composer</a> to install this library.
+</p>
+<pre>composer require cspray/websocket-commands</pre>
+
+<hr>
+
+<h2 id="quick-start" class="subtitle is-size-2">Quick Start</h2>
+<p class="content">
+  For our quick start we will demonstrate a simple WebsocketCommand that will echo back to the client a value
+  sent in the ClientPayload.
+</p>
+
+<script src="https://gist.github.com/cspray/630ee9bcbea3854ec74366ec23bbc0ec.js"></script>
+
+<p class="content">
+  For a deeper look into the heart of the library check out <a href="/command-client-payload/">the Command &amp; Client Payload section.</a>
+</p>
+
+        </section>
+      </div>
+      <div class="column is-2">
+        <div class="menu">
+          <ul class="menu-list">
+            <li><a href="/" class="is-active">Quick Start</a>
+</li>
+            <li><a href="/command-client-payload/" class="">Command &amp; Client Payload</a>
+</li>
+            <li><a href="/middleware/" class="">Middleware</a>
+</li>
+            <li><a href="/handshake-authentication/" class="">Handshake Authentication</a>
+</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

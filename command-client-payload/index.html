@@ -1,0 +1,72 @@
+---
+layout: default
+---
+<h2 class="title is-size-2">Command &amp; ClientPayload</h2>
+
+<p class="content">
+  The bread &amp; butter of applications written on top of this framework should be implementations of <code>WebsocketCommand</code>;
+  a very simple interface that requires you to provide a name and a method that will be called whenever a Client requests
+  the command to be executed. If it helps you think about it a WebsocketCommand is generally analogous to a Controller in
+  traditional HTTP frameworks.
+</p>
+
+<h3 class="subtitle is-size-4">WebsocketCommand::getName</h3>
+
+<p class="content">
+  It is important to take a little time to discuss the name of your command because naming things is important. It is
+  good to keep in mind when naming your commands that a user will need to use the exact name to execute it. Your command
+  should be concise and explicit. Generally speaking we suggest you follow the below conventions when naming based on
+  whether you anticipate sharing your command with the community or using it in a private app.
+</p>
+
+<h4 class="is-size-5">Community Shared Commands</h4>
+
+<p class="content">
+  When you are building a library that you expect to share with the community we recommend that you allow the name to be
+  configured at construction time through a dependency while also providing a sane default. The reasoning for this is that
+  the application using your command should define the structure for how clients interact with it. Also we recommend that
+  your name include a vendor and/or app namespace such that default values have the following format:
+</p>
+
+<pre class="content">vendor.command-name</pre>
+
+<div class="message is-warning">
+  <div class="message-header">
+    Note
+  </div>
+  <div class="message-body">
+    Generally speaking we do not recommend that you add a vendor and app namespace because of the need to balance between
+    reasonably unique command names and end-user experience.
+  </div>
+</div>
+
+<h4 class="is-size-5">Private Commands</h4>
+
+<p class="content">
+  Obviously private commands are less important regarding namespacing; if your command is not shared with the community
+  and as long as community commands you do include adhere to the above guidelines your private commands can truly be
+  whatever you'd like them to be. However, we recommend that you maintain consistency with the format of the name and
+  simply exclude the vendor and/or app namespacing.
+</p>
+
+<pre class="content">command-name</pre>
+
+<h3 class="subtitle is-size-4">WebsocketCommand::execute</h3>
+
+<p class="content">
+  The execute method is where all of your command's business logic will go. It should return a Promise that resolves with
+  null upon completion or fails if an exception is thrown. Two arguments will be passed; the first being an <code>Amp\Websocket\Client</code>
+  and the second being a <code>Cspray\WebsocketCommands\ClientPayload</code>. There are no guidelines or recommendations
+  on what your command does... just remember not to block the event loop!
+</p>
+
+<h3 class="subtitle is-size-4">ClientPayload</h3>
+
+<p class="content">
+  Instead of providing the raw Message contents we do additional parsing of it and turn it from a JSON encoded string into a
+  <code>Cspray\WebsocketCommands\ClientPayload</code> instance. This implementation makes use of
+  <a href="http://github.com/adbario/php-dot-notation">adbario/php-dot-notation</a> to simplify the retrieval of arbitrarily
+  nested arrays. I highly recommend that you read the documentation for this library as it allows for some pretty concise
+  interactions with array structures.
+</p>
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>WebsocketCommands</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+  <script src="https://kit.fontawesome.com/e0b4a7b997.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header>
+  <div class="container is-fluid">
+    <nav class="navbar">
+      <div class="nav-brand">
+        <a href="/" class="navbar-item"><h1 class="title">WebsocketCommands</h1></a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="container is-fluid">
+    <div class="columns">
+      <div class="column">
+        <section class="section">
+          {{ content }}
+        </section>
+      </div>
+      <div class="column is-2">
+        <div class="menu">
+          <ul class="menu-list">
+            <li>{% include nav_link.html url="/" label="Quick Start" %}</li>
+            <li>{% include nav_link.html url="/command-client-payload/" label="Command &amp; Client Payload" %}</li>
+            <li>{% include nav_link.html url="/middleware/" label="Middleware" %}</li>
+            <li>{% include nav_link.html url="/handshake-authentication/" label="Handshake Authentication" %}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

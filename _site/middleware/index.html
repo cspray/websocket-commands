@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>WebsocketCommands</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+  <script src="https://kit.fontawesome.com/e0b4a7b997.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header>
+  <div class="container is-fluid">
+    <nav class="navbar">
+      <div class="nav-brand">
+        <a href="/" class="navbar-item"><h1 class="title">WebsocketCommands</h1></a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="container is-fluid">
+    <div class="columns">
+      <div class="column">
+        <section class="section">
+          <h2 class="title is-size-2">Middleware</h2>
+
+<p class="content">
+  Middleware in this library works much like it does in others; a set of operations occur before the WebsocketCommand is
+  executed and each operation can control whether or not the rest of the middleware of the WebsocketCommand itself is
+  executed. There are 2 "types" of middleware; global, in which every command will have this middleware executed and
+  command specific, in which only the command associated with the middleware will be executed.
+</p>
+
+<p class="content">
+  First let's take a look at the WebsocketCommandMiddleware itself then we will take a look at the concept of a "middleware chain"
+  and how you can control the way it is executed with the <code>Cspray\WebsocketCommands\Enum\MiddlewareChain</code> enum.
+</p>
+
+<h3 class="subtitle is-size-3">WebsocketCommandMiddleware::handleClient</h3>
+
+<p class="content">
+  This method expects a Promise to be returned that should resolve with a <code>MiddlewareChain</code> enum or null. There
+  are two arguments passed to this method; the first being the Client who has requested the command and the second being
+  the ClientPayload associated with this command request. You can manipulate the ClientPayload and subsequent middleware,
+  as well as the command itself, will receive this updated data. Check out the details below for how you can control the
+  execution of the middleware associated with a given command.
+</p>
+
+<h3 class="subtitle is-size-3">Middleware Chain</h3>
+
+<p class="content">
+  Let's imagine a scenario where there are two global middleware and a single command-specific middleware. You can think
+  of how these would execute as a chain that resembles the following:
+</p>
+
+<div class="level is-size-5">
+  <div class="level-left">
+    <div class="level-item">
+      Global Middleware A
+    </div>
+    <div class="level-item">
+      <span class="icon">
+        <i class="fas fa-long-arrow-alt-right"></i>
+      </span>
+    </div>
+    <div class="level-item">
+      Global Middleware B
+    </div>
+    <div class="level-item">
+      <span class="icon">
+        <i class="fas fa-long-arrow-alt-right"></i>
+      </span>
+    </div>
+    <div class="level-item">
+      Command Specific Middleware
+    </div>
+    <div class="level-item">
+      <span class="icon">
+        <i class="fas fa-long-arrow-alt-right"></i>
+      </span>
+    </div>
+    <div class="level-item">
+      WebsocketCommand
+    </div>
+  </div>
+</div>
+
+<p class="content">
+  Each global middleware will be executed first, in the order in which they were associated to the CommandPoweredWebsocket,
+  and then any command specific middleware will be executed, again in the order in which they were associated to the
+  CommandPoweredWebsocket. At the end of the chain is the WebsocketCommand itself. You can control how the chain executes
+  by resolving the Promise from each middleware with an instance of the <code>Cspray\WebsocketCommands\Enum\MiddlewareChain</code>
+  enum.
+</p>
+
+<p class="content">
+  In the below diagrams <span class="icon has-text-success"><i class="fas fa-check"></i></span> means the middleware or
+  command is executed and <span class="icon has-text-danger"><i class="fas fa-ban"></i></span> means the middleware or
+  command was <strong>not</strong> executed.
+</p>
+
+<h4 class="content is-size-4">MiddlewareChain::Continue</h4>
+
+<p class="content">
+  The most likely to be used instance; when resolving with this enum value the next middleware, or the command itself,
+  will be executed as normal. If you implicitly resolve <code>null</code> from your middleware it will be treated as if
+  you had resolved with <code>MiddlewareChain::Continue</code>. Assuming that all of the middleware we described above
+  resolves with this value the chain will look like:
+</p>
+
+<div class="level is-size-5">
+  <div class="level-left">
+    <div class="level-item">
+      <span class="icon has-text-success"><i class="fas fa-check"></i></span>
+      Global Middleware A
+    </div>
+    <div class="level-item">
+      <span class="icon"><i class="fas fa-long-arrow-alt-right"></i></span>
+    </div>
+    <div class="level-item">
+      <span class="icon has-text-success"><i class="fas fa-check"></i></span>
+      Global Middleware B
+    </div>
+    <div class="level-item">
+      <span class="icon"><i class="fas fa-long-arrow-alt-right"></i></span>
+    </div>
+    <div class="level-item">
+      <span class="icon has-text-success"><i class="fas fa-check"></i></span>
+      Command Specific Middleware
+    </div>
+    <div class="level-item">
+      <span class="icon"><i class="fas fa-long-arrow-alt-right"></i></span>
+    </div>
+    <div class="level-item">
+      <span class="icon has-text-success"><i class="fas fa-check"></i></span>
+      WebsocketCommand
+    </div>
+  </div>
+</div>
+
+<h4 class="content is-size-4">MiddlewareChain::Skip</h4>
+
+<p class="content">
+  When you resolve the middleware with this enum instance any remaining middleware will <strong>not</strong> be executed
+  but the WebsocketCommand itself will be. In our chain from above if the first global middleware were to resolve with this
+  enum value the chain would look like:
+</p>
+
+<div class="level is-size-5">
+  <div class="level-left">
+    <div class="level-item">
+      <span class="icon has-text-success"><i class="fas fa-check"></i></span>
+      Global Middleware A
+    </div>
+    <div class="level-item">
+      <span class="icon"><i class="fas fa-long-arrow-alt-right"></i></span>
+    </div>
+    <div class="level-item">
+      <span class="icon has-text-danger"><i class="fas fa-ban"></i></span>
+      Global Middleware B
+    </div>
+    <div class="level-item">
+      <span class="icon"><i class="fas fa-long-arrow-alt-right"></i></span>
+    </div>
+    <div class="level-item">
+      <span class="icon has-text-danger"><i class="fas fa-ban"></i></span>
+      Command Specific Middleware
+    </div>
+    <div class="level-item">
+      <span class="icon"><i class="fas fa-long-arrow-alt-right"></i></span>
+    </div>
+    <div class="level-item">
+      <span class="icon has-text-success"><i class="fas fa-check"></i></span>
+      WebsocketCommand
+    </div>
+  </div>
+</div>
+
+<h4 class="content is-size-4">MiddlewareChain::ShortCircuit</h4>
+
+<p class="content">
+  When you resolve the middleware with this enum instance any remaining middleware will <strong>not</strong> be executed
+  and neither will the WebsocketCommand itself. In our chain from above if the first global middleware were to resolve
+  with this enum value the chain would look like:
+</p>
+
+<div class="level is-size-5">
+  <div class="level-left">
+    <div class="level-item">
+      <span class="icon has-text-success"><i class="fas fa-check"></i></span>
+      Global Middleware A
+    </div>
+    <div class="level-item">
+      <span class="icon"><i class="fas fa-long-arrow-alt-right"></i></span>
+    </div>
+    <div class="level-item">
+      <span class="icon has-text-danger"><i class="fas fa-ban"></i></span>
+      Global Middleware B
+    </div>
+    <div class="level-item">
+      <span class="icon"><i class="fas fa-long-arrow-alt-right"></i></span>
+    </div>
+    <div class="level-item">
+      <span class="icon has-text-danger"><i class="fas fa-ban"></i></span>
+      Command Specific Middleware
+    </div>
+    <div class="level-item">
+      <span class="icon"><i class="fas fa-long-arrow-alt-right"></i></span>
+    </div>
+    <div class="level-item">
+      <span class="icon has-text-danger"><i class="fas fa-ban"></i></span>
+      WebsocketCommand
+    </div>
+  </div>
+</div>
+
+        </section>
+      </div>
+      <div class="column is-2">
+        <div class="menu">
+          <ul class="menu-list">
+            <li><a href="/" class="">Quick Start</a>
+</li>
+            <li><a href="/command-client-payload/" class="">Command &amp; Client Payload</a>
+</li>
+            <li><a href="/middleware/" class="is-active">Middleware</a>
+</li>
+            <li><a href="/handshake-authentication/" class="">Handshake Authentication</a>
+</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>
