@@ -20,7 +20,7 @@ The library's currently released version is documented in-source and at [websock
 
 ## Roadmap
 
-The **1.x** releases of this project are intended to slidify the API while several Amp packages are going their Release 
+The **1.x** releases of this project are intended to solidify the API while several Amp packages are going their Release 
 Candidate phase. Once those dependent libraries have stable versions released the **2.0** release development will start.
 The exact features for the initial 2.0 release are detailed in the [Release 2.0 Project]
 
