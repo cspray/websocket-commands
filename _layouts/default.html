@@ -5,10 +5,15 @@
   <title>WebsocketCommands</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
   <script src="https://kit.fontawesome.com/e0b4a7b997.js" crossorigin="anonymous"></script>
+  <style>
+    code {
+      white-space: nowrap;
+    }
+  </style>
 </head>
 <body>
 <header>
-  <div class="container is-fluid">
+  <div class="container">
     <nav class="navbar">
       <div class="nav-brand">
         <a href="/" class="navbar-item"><h1 class="title">WebsocketCommands</h1></a>
@@ -17,14 +22,14 @@
   </div>
 </header>
 <main>
-  <div class="container is-fluid">
+  <div class="container">
     <div class="columns">
       <div class="column">
         <section class="section">
           {{ content }}
         </section>
       </div>
-      <div class="column is-2">
+      <div class="column is-3">
         <div class="menu">
           <ul class="menu-list">
             <li>{% include nav_link.html url="/" label="Quick Start" %}</li>
@@ -37,5 +42,12 @@
     </div>
   </div>
 </main>
+
+<footer class="footer">
+  <div class="content has-text-centered">
+    WebsocketCommands was created by <a href="https://cspray.io">Charles Sprayberry</a> with <a href="https://amphp.org">Amp</a>.
+    The software is licensed under the <a href="https://opensource.org/licenses/MIT">OSI MIT License</a>.
+  </div>
+</footer>
 </body>
 </html>

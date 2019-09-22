@@ -1,6 +1,19 @@
 ---
 layout: default
 ---
+<h2 class="title is-size-2">Handshake Authentication</h2>
 
-Handshake Authentication
+<p class="content">
+  Handshake authentication takes care of making sure that the Websocket is authenticated properly during the handshake
+  procedure. You can conceptually think of this as handling the traditional HTTP request before websocket communication
+  begins. You can interrogate a Request object and set the status code, headers, and/or cookies for the Response.
+</p>
 
+<h3 class="subtitle is-size-4">HandshakeAuthenticator::onHandshake</h3>
+
+<p class="content">
+  This method must return a Promise that should resolve with the Response object. It accepts 2 arguments; the first being
+  an <code>Amp\Http\Server\Request</code> which can be used to interrogate headers, cookies, or query parameters and the
+  second being an <code>Amp\Http\Server\Response</code> which can be used to set status code, headers, and/or cookies. If
+  the Response status code is set to a non-2XX response the websocket connection will be terminated.
+</p>

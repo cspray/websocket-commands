@@ -4,11 +4,20 @@ layout: default
 <h2 class="title is-size-2">Command &amp; ClientPayload</h2>
 
 <p class="content">
-  The bread &amp; butter of applications written on top of this framework should be implementations of <code>WebsocketCommand</code>;
+  The bread &amp; butter of applications written on top of this framework should be implementations of <code class="is-family-code">Cspray\WebsocketCommands\WebsocketCommand</code>;
   a very simple interface that requires you to provide a name and a method that will be called whenever a Client requests
   the command to be executed. If it helps you think about it a WebsocketCommand is generally analogous to a Controller in
   traditional HTTP frameworks.
 </p>
+
+<div class="message is-info">
+  <div class="message-header">
+    Code Examples
+  </div>
+  <div class="message-body">
+    To see a code example of a WebsocketCommand please check out the <a href="/#quick-start-example">Quick Start example</a>.
+  </div>
+</div>
 
 <h3 class="subtitle is-size-4">WebsocketCommand::getName</h3>
 
