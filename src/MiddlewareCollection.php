@@ -33,6 +33,10 @@ final class MiddlewareCollection {
         return $this->collection['commands'];
     }
 
+    /**
+     * @param WebsocketCommand $websocketCommand
+     * @return WebsocketCommandMiddleware[]
+     */
     public function getMiddlewaresForCommand(WebsocketCommand $websocketCommand) : array {
         $globalMiddlewares = $this->getGlobalMiddlewares();
         $commandMiddlewares = $this->getCommandSpecificMiddlewares()[$websocketCommand->getName()] ?? [];

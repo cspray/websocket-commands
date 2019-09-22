@@ -201,7 +201,7 @@ final class CommandPoweredWebsocket extends Websocket {
             return Promise\all($promises);
         });
 
-        return call(function() use($client) {
+        return call(function() use($request, $client) {
             /** @var Message $message */
             while ($message = yield $client->receive()) {
                 $clientPayload = yield $this->parseClientPayload($client, $message);
@@ -211,7 +211,7 @@ final class CommandPoweredWebsocket extends Websocket {
 
                 $command = $this->commands[$clientPayload->get('command')];
 
-                yield $this->processCommand($command, $client, $clientPayload);
+                yield $this->processCommand($request, $command, $client, $clientPayload);
             }
         });
     }
@@ -239,12 +239,17 @@ final class CommandPoweredWebsocket extends Websocket {
         });
     }
 
-    private function processCommand(WebsocketCommand $command, Client $client, ClientPayload $clientPayload) : Promise {
-        return call(function() use($command, $client, $clientPayload) {
+    private function processCommand(
+        Request $request,
+        WebsocketCommand $command,
+        Client $client,
+        ClientPayload $clientPayload
+    ) : Promise {
+        return call(function() use ($request, $command, $client, $clientPayload) {
             $shortCircuited = false;
 
             foreach ($this->middleware->getMiddlewaresForCommand($command) as $middleware) {
-                $whatToDo = yield $middleware->handleClient($client, $clientPayload);
+                $whatToDo = yield $middleware->handleClient($request, $client, $clientPayload);
 
                 if (is_null($whatToDo)) {
                     $whatToDo = MiddlewareChain::Continue();

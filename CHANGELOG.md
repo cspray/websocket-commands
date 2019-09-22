@@ -1,10 +1,6 @@
 # Changelog
 
-## 1.2.0 - 20??-??-??
-
-- Add a `WebsocketMulticaster` that will allow for multicasting to a pool of clients without the need to ask for the Websocket directly.
-- Add a `WebsocketBroadcaster` that will allow for broadcasting to all clients without the need to ask for the Websocket directly.
-- Implement better logging within the `CommandPoweredWebsocket`.
+## 1.2.0 - 2019-09-??
 
 ### Added
 

@@ -2,6 +2,7 @@
 
 namespace Cspray\WebsocketCommands;
 
+use Amp\Http\Server\Request;
 use Amp\Promise;
 use Amp\Websocket\Client;
 use Cspray\WebsocketCommands\Enum\MiddlewareChain;
@@ -24,10 +25,11 @@ interface WebsocketCommandMiddleware {
      * implicitness, however you may also resolve the Promise with null which is an implicit MiddlewareChain::Continue.
      * Any value other than a MiddlewareChain instance or null will result in an InvalidTypeException.
      *
+     * @param Request $request
      * @param Client $client
      * @param ClientPayload $clientPayload
      * @return Promise<MiddlewareChain|null>
      */
-    public function handleClient(Client $client, ClientPayload $clientPayload) : Promise;
+    public function handleClient(Request $request, Client $client, ClientPayload $clientPayload) : Promise;
 
 }
